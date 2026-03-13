@@ -1,3 +1,12 @@
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val localFile = rootProject.file("local.properties")
+    if (localFile.exists()) {
+        localFile.inputStream().use(::load)
+    }
+}
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -14,8 +23,13 @@ android {
     defaultConfig {
         minSdk = 24
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // Inject token from local.properties into generated BuildConfig.
+        buildConfigField("String", "GITHUB_TOKEN",
+            localProperties.getProperty("GITHUB_TOKEN", ""))
     }
 
     buildTypes {
@@ -30,6 +44,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 

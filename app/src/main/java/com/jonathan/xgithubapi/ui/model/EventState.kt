@@ -1,9 +1,11 @@
 package com.jonathan.xgithubapi.ui.model
 
-data class EventState(
-    val idle: Boolean = false,
-    val showLoading: Boolean = false,
-    val isEmpty: Boolean = false,
-    val listDogUi: List<GithubUi>? = null,
-    val showError: String? = null
-)
+
+sealed interface EventState {
+    object Idle : EventState
+    object Loading : EventState
+    object Empty : EventState
+
+    data class Repos(val repositories: List<GithubUi>?) : EventState
+    data class Error(val message: String) : EventState
+}

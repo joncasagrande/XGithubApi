@@ -13,11 +13,13 @@ class GithubRepoMapper {
                 forks = repos.forksCount ?: 0,
                 watchers = repos.watchers ?: 0,
                 lang = repos.language?: "N/A",
-                description = repos.description.orEmpty(),
+                description = repos.description,
                 ownerName = repos.owner?.login.orEmpty(),
+                ownerInfo = repos.owner?.htmlUrl.orEmpty(),
                 stars = repos.stargazersCount ?: 0,
                 license = repos.license?.name.orEmpty(),
-                lastUpdated = repos.updatedAt.orEmpty()
+                lastUpdated = repos.updatedAt.orEmpty(),
+                fork = repos.fork ?: false
             )
             githubReposDtos.add(githubReposDto)
         }

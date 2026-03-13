@@ -55,6 +55,17 @@ dependencies {
     implementation(libs.androidx.compose.runtime.livedata)
     ksp(libs.hilt.compiler)
 
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.mockk.agent)
+    testImplementation(libs.mockk)
+
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent)
+    androidTestImplementation(libs.mockk)
+
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(kotlin("test"))
 
     implementation(libs.androidx.material3)
     implementation(libs.androidx.core.splashscreen)

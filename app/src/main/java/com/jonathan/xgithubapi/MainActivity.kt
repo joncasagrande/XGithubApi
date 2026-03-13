@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jonathan.xgithubapi.ui.fragment.HomeFragment
 import com.jonathan.xgithubapi.ui.fragment.RepoDetailsFragment
 import com.jonathan.xgithubapi.ui.model.GithubUi
-import com.jonathan.xgithubapi.ui.theme.GithubXplorerTheme
+import com.jonathan.xgithubapi.ui.theme.XGithubApiTheme
 import com.jonathan.xgithubapi.ui.viewmodel.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
         }
         enableEdgeToEdge()
         setContent {
-            GithubXplorerTheme {
+            XGithubApiTheme {
                 ScreenMain()
             }
         }
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
             }
             // Breed List
             composable(Routes.ReposDescription.route) {
-                RepoDetailsFragment(navController, githubUi!!)
+                githubUi?.let { githubUi -> RepoDetailsFragment(navController, githubUi) }
             }
         }
     }

@@ -6,9 +6,11 @@ data class GithubReposDto(
     val forks: Int,
     val watchers: Int,
     val lang: String,
-    val description: String,
+    val description: String?,
     val ownerName: String,
+    val ownerInfo: String,
     val stars: Int,
     val license: String,
-    val lastUpdated: String
+    val lastUpdated: String,
+    val fork: Boolean
 )

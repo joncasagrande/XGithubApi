@@ -4,4 +4,6 @@
     <string name="no_dog_found">404 repo not found</string>
     <string name="empty_list">List is empty</string>
     <string name="back">Back</string>
+    <string name="empty_description">Empty Description</string>
+    <string name="license_na">not available</string>
 </resources>

@@ -26,6 +26,7 @@ import com.jonathan.xgithubapi.ui.components.ErrorCompose
 import com.jonathan.xgithubapi.ui.components.GitToolbar
 import com.jonathan.xgithubapi.ui.components.GithubCard
 import com.jonathan.xgithubapi.ui.components.LoadingComponent
+import com.jonathan.xgithubapi.ui.model.EventState
 import com.jonathan.xgithubapi.ui.model.GithubUi
 import com.jonathan.xgithubapi.ui.viewmodel.MainActivityViewModel
 
@@ -47,20 +48,21 @@ fun HomeFragment(
         topBar = { GitToolbar("Github Repositories", scrollBehavior) }
     ) { innerPadding ->
         PullToRefreshBox(
-            isRefreshing = eventState.value?.showLoading == true,
+            isRefreshing = (eventState.value == EventState.Loading),
             onRefresh = {
                 viewModel.loadRepos()
             },
             modifier = Modifier.padding(innerPadding)
         ) {
-            when {
-                eventState.value?.listDogUi?.isNotEmpty() == true -> {
-                    Column{
+            when (eventState.value) {
+                is EventState.Repos -> {
+                    Column {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             contentPadding = PaddingValues(8.dp)
                         ) {
-                            val dogList: List<GithubUi> = eventState.value?.listDogUi ?: emptyList()
+                            val dogList: List<GithubUi> =
+                                (eventState.value as EventState.Repos).repositories ?: emptyList()
                             items(dogList.size) { index ->
                                 dogList.let {
                                     Card(
@@ -78,22 +80,28 @@ fun HomeFragment(
                     }
                 }
 
-                eventState.value?.showError?.isNotEmpty() == true -> {
+                is EventState.Error -> {
                     Column() {
-                        ErrorCompose(eventState.value?.showError.orEmpty())
+                        ErrorCompose((eventState.value as EventState.Error).message)
                     }
                 }
 
-                eventState.value?.isEmpty == true -> {
+                is EventState.Empty -> {
                     Column() {
                         EmptyListCompose(getString(LocalContext.current, R.string.empty_list))
                     }
                 }
 
 
-                eventState.value?.showLoading == true -> {
+                is EventState.Loading -> {
                     Column() {
                         LoadingComponent()
+                    }
+                }
+
+                else -> {
+                    Column() {
+                        ErrorCompose("Unknown state")
                     }
                 }
             }

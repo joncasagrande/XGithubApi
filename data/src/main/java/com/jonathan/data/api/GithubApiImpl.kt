@@ -15,7 +15,7 @@ class GithubApiImpl @Inject constructor(
 
     override suspend fun fetchRepos(amount: Int?): NetworkResult<List<Github>> {
         return client.get {
-            url("$GITHUB_API/$amount")
+            url(GITHUB_API)
         }.toResult()
     }
 

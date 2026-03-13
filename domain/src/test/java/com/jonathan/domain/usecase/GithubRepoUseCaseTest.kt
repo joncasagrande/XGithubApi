@@ -50,12 +50,12 @@ class GithubRepoUseCaseTest {
 
         //then
         assertEquals(
-            success.listDogs.first().image,
+            success.reposDtos.first().image,
             "avatar_url"
         )
 
         assertEquals(
-            success.listDogs.first().name,
+            success.reposDtos.first().name,
             "repoRepo"
         )
     }

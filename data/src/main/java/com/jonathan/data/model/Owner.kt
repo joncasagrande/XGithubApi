@@ -1,48 +1,29 @@
 package com.jonathan.data.model
 
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class Owner (
 
-  
- var login             : String?  = null,
-  
- var id                : Int?     = null,
-  
- var nodeId            : String?  = null,
-  
- var avatarUrl         : String?  = null,
-  
- var gravatarId        : String?  = null,
-  
- var url               : String?  = null,
-  
- var htmlUrl           : String?  = null,
-  
- var followersUrl      : String?  = null,
-  
- var followingUrl      : String?  = null,
-  
- var gistsUrl          : String?  = null,
-  
- var starredUrl        : String?  = null,
-  
- var subscriptionsUrl  : String?  = null,
-  
- var organizationsUrl  : String?  = null,
-  
- var reposUrl          : String?  = null,
-  
- var eventsUrl         : String?  = null,
-  
- var receivedEventsUrl : String?  = null,
-  
- var type              : String?  = null,
-  
- var userViewType      : String?  = null,
-  
- var siteAdmin         : Boolean? = null
+    @SerialName("login"               ) var login             : String?  = null,
+    @SerialName("id"                  ) var id                : Int?     = null,
+    @SerialName("node_id"             ) var nodeId            : String?  = null,
+    @SerialName("avatar_url"          ) var avatarUrl         : String?  = null,
+    @SerialName("gravatar_id"         ) var gravatarId        : String?  = null,
+    @SerialName("url"                 ) var url               : String?  = null,
+    @SerialName("html_url"            ) var htmlUrl           : String?  = null,
+    @SerialName("followers_url"       ) var followersUrl      : String?  = null,
+    @SerialName("following_url"       ) var followingUrl      : String?  = null,
+    @SerialName("gists_url"           ) var gistsUrl          : String?  = null,
+    @SerialName("starred_url"         ) var starredUrl        : String?  = null,
+    @SerialName("subscriptions_url"   ) var subscriptionsUrl  : String?  = null,
+    @SerialName("organizations_url"   ) var organizationsUrl  : String?  = null,
+    @SerialName("repos_url"           ) var reposUrl          : String?  = null,
+    @SerialName("events_url"          ) var eventsUrl         : String?  = null,
+    @SerialName("received_events_url" ) var receivedEventsUrl : String?  = null,
+    @SerialName("type"                ) var type              : String?  = null,
+    @SerialName("user_view_type"      ) var userViewType      : String?  = null,
+    @SerialName("site_admin"          ) var siteAdmin         : Boolean? = null
 
 )

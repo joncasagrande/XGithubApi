@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joncasagrande.domain.usecase.GithubRepoUseCase
+import com.jonathan.domain.usecase.GithubRepoUseCase
 import com.jonathan.xgithubapi.ui.model.EventState
 import com.jonathan.xgithubapi.ui.model.GithubUi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,14 +20,14 @@ class MainActivityViewModel @Inject constructor(
     val eventData: LiveData<EventState> = _eventData
 
     fun loadRepos() {
-        _eventData.value = EventState(showLoading = true)
+        _eventData.value = EventState.Loading
         viewModelScope.launch {
             _eventData.value = when (val result = useCase.getRepos()) {
                 is GithubRepoUseCase.Event.Success -> {
-                    if (result.listDogs.isEmpty())
-                        EventState(isEmpty = true)
+                    if (result.reposDtos.isEmpty())
+                        EventState.Empty
                     else
-                        EventState(listDogUi = result.listDogs.map {
+                        EventState.Repos( result.reposDtos.map {
                             GithubUi(
                                 it.name,
                                 it.image.orEmpty(),
@@ -37,12 +37,14 @@ class MainActivityViewModel @Inject constructor(
                                 it.lastUpdated,
                                 it.lang,
                                 it.license,
-                                it.ownerName
+                                it.ownerName,
+                                it.ownerInfo,
+                                it.fork
                             )
                         })
                 }
 
-                is GithubRepoUseCase.Event.Error -> EventState(showError = result.error)
+                is GithubRepoUseCase.Event.Error -> EventState.Error(message = result.error)
             }
         }
     }

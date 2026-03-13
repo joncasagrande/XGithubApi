@@ -11,7 +11,7 @@ class GithubRepoUseCase @Inject constructor(
     val mapper: GithubRepoMapper
 ) {
     sealed class Event {
-        data class Success(val listDogs: List<GithubReposDto>) : Event()
+        data class Success(val reposDtos: List<GithubReposDto>) : Event()
         data class Error(val error: String) : Event()
     }
 

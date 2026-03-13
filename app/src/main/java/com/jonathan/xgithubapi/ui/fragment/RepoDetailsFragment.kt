@@ -29,12 +29,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.jonathan.xgithubapi.R
 import com.jonathan.xgithubapi.ui.components.InnerToolbar
 import com.jonathan.xgithubapi.ui.model.GithubUi
 
@@ -77,10 +79,16 @@ fun RepoDetailsFragment(
                         .border(1.dp, Color.Gray, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Owned by: ${githubUi.ownerName}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Column {
+                    Text(
+                        text = "Owned by: ${githubUi.ownerName}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "Owned Info: ${githubUi.ownerInfo}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
             // Repository Stats (Stars, Forks)
             Row(
@@ -97,7 +105,7 @@ fun RepoDetailsFragment(
 
             // Repository Description
             Text(
-                text = githubUi.description,
+                text = githubUi.description ?: stringResource(R.string.empty_description),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -124,7 +132,7 @@ fun RepoDetailsFragment(
             githubUi.license?.let {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "License: $it",
+                    text = "License: ${it.ifBlank { stringResource(R.string.license_na) }}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -160,7 +168,8 @@ fun RepoDetailPagePreview() {
             language = "Kotlin",
             license = "MIT",
             avatar = "https://example.com/avatar.png",
-            ownerName = "Google"
+            ownerName = "Google",
+            ownerInfo = ""
         )
     )
 }
