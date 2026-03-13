@@ -51,5 +51,3 @@
 
 - [Pull to refresh](https://developer.android.com/develop/ui/compose/components/pull-to-refresh)
 
-- [Search Bar](https://developer.android.com/develop/ui/compose/components/search-bar)
-
