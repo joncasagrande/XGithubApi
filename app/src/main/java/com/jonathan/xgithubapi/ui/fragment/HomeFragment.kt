@@ -18,7 +18,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,22 +31,18 @@ import com.jonathan.xgithubapi.ui.components.GithubCard
 import com.jonathan.xgithubapi.ui.components.LoadingComponent
 import com.jonathan.xgithubapi.ui.model.EventState
 import com.jonathan.xgithubapi.ui.model.GithubUi
-import com.jonathan.xgithubapi.ui.viewmodel.MainActivityViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeFragment(
-    viewModel: MainActivityViewModel,
+    eventState: EventState?,
     clickListener: (GithubUi) -> Unit,
+    loadNextPage: () -> Unit,
+    onRefresh: () -> Unit
 ) {
-    val eventState = viewModel.eventData.observeAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val gridState = rememberLazyGridState()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadRepos()
-    }
 
     LaunchedEffect(gridState) {
         snapshotFlow {
@@ -56,9 +51,9 @@ fun HomeFragment(
             val totalItems = layoutInfo.totalItemsCount
             totalItems > 0 && lastVisibleIndex >= totalItems - 4
         }.distinctUntilChanged().collect { nearEnd ->
-            val reposState = eventState.value as? EventState.Repos ?: return@collect
+            val reposState = eventState as? EventState.Repos ?: return@collect
             if (nearEnd && !reposState.isLoadingNextPage) {
-                viewModel.loadNextPage()
+                loadNextPage.invoke()
             }
         }
     }
@@ -68,13 +63,11 @@ fun HomeFragment(
         topBar = { GitToolbar("Github Repositories", scrollBehavior) }
     ) { innerPadding ->
         PullToRefreshBox(
-            isRefreshing = (eventState.value == EventState.Loading),
-            onRefresh = {
-                viewModel.loadRepos()
-            },
+            isRefreshing = (eventState == EventState.Loading),
+            onRefresh = onRefresh,
             modifier = Modifier.padding(innerPadding)
         ) {
-            when (val state = eventState.value) {
+            when (val state = eventState) {
                 is EventState.Repos -> {
                     val repoList = state.repositories.orEmpty()
                     LazyVerticalGrid(

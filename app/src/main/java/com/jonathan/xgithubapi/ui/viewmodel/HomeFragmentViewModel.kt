@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jonathan.domain.model.GithubReposDto
 import com.jonathan.domain.usecase.GithubRepoUseCase
+import com.jonathan.xgithubapi.ui.mapper.GithubReposDtoToUiMapper
 import com.jonathan.xgithubapi.ui.model.EventState
 import com.jonathan.xgithubapi.ui.model.GithubUi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,8 @@ private const val PAGE_SIZE = 10
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val useCase: GithubRepoUseCase
+    private val useCase: GithubRepoUseCase,
+    private val mapper: GithubReposDtoToUiMapper
 ) : ViewModel() {
 
     private val _eventData = MutableLiveData<EventState>()
@@ -39,7 +40,7 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = useCase.getRepos(page = currentPage, perPage = PAGE_SIZE)) {
                 is GithubRepoUseCase.Event.Success -> {
-                    val firstPage = result.reposDtos.map { it.toUi() }
+                    val firstPage = mapper.mapper(result.reposDtos)
                     currentRepos.addAll(firstPage)
                     hasMorePages = firstPage.size >= PAGE_SIZE
                     _eventData.value = if (currentRepos.isEmpty()) {
@@ -71,7 +72,7 @@ class MainActivityViewModel @Inject constructor(
             val nextPage = currentPage + 1
             when (val result = useCase.getRepos(page = nextPage, perPage = PAGE_SIZE)) {
                 is GithubRepoUseCase.Event.Success -> {
-                    val nextRepos = result.reposDtos.map { it.toUi() }
+                    val nextRepos = mapper.mapper(result.reposDtos)
                     if (nextRepos.isNotEmpty()) {
                         currentPage = nextPage
                         currentRepos.addAll(nextRepos)
@@ -90,21 +91,5 @@ class MainActivityViewModel @Inject constructor(
             }
             isLoadingPage = false
         }
-    }
-
-    private fun GithubReposDto.toUi(): GithubUi {
-        return GithubUi(
-            name = name,
-            avatar = image.orEmpty(),
-            description = description,
-            stars = 0,
-            forks = forks,
-            lastUpdated = lastUpdated,
-            language = lang,
-            license = license,
-            ownerName = ownerName,
-            ownerInfo = ownerInfo,
-            fork = fork
-        )
     }
 }
