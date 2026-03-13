@@ -21,7 +21,7 @@ class MainActivityViewModelTest {
     lateinit var viewModel: MainActivityViewModel
 
     @MockK
-    lateinit var useCase:  GithubRepoUseCase
+    lateinit var useCase: GithubRepoUseCase
 
     @Before
     fun setUp() {
@@ -30,7 +30,7 @@ class MainActivityViewModelTest {
     }
 
     @Test
-    fun getListDogsWithSuccess() {
+    fun getListReposWithSuccess() {
         //given
         val githubReposDtos = listOf(
             GithubReposDto(
@@ -52,7 +52,7 @@ class MainActivityViewModelTest {
             GithubUi(
                 name = "Jetpack Compose",
                 description = "Jetpack Compose is Android's modern toolkit for building native UIs.",
-                stars = 1234,
+                stars = 0,
                 forks = 567,
                 lastUpdated = "2 days ago",
                 language = "Kotlin",
@@ -63,7 +63,7 @@ class MainActivityViewModelTest {
                 fork = true
             )
         )
-        coEvery { useCase.getRepos() } returns GithubRepoUseCase.Event.Success(
+        coEvery { useCase.getRepos(1, 20) } returns GithubRepoUseCase.Event.Success(
             githubReposDtos
         )
         val eventObserver = mockkObserver(viewModel.eventData)
@@ -79,10 +79,10 @@ class MainActivityViewModelTest {
     }
 
     @Test
-    fun getListDogsWithEmpty() {
+    fun getListRepoWithEmpty() {
         //given
         val listDogBreedDto = emptyList<GithubReposDto>()
-        coEvery { useCase.getRepos() } returns GithubRepoUseCase.Event.Success(
+        coEvery { useCase.getRepos(1, 20) } returns GithubRepoUseCase.Event.Success(
             listDogBreedDto
         )
         val eventObserver = mockkObserver(viewModel.eventData)
@@ -98,9 +98,9 @@ class MainActivityViewModelTest {
     }
 
     @Test
-    fun getListDogsWithError() {
+    fun getListReposWithError() {
         //given
-        coEvery { useCase.getRepos() } returns GithubRepoUseCase.Event.Error(
+        coEvery { useCase.getRepos(1, 20) } returns GithubRepoUseCase.Event.Error(
             "api error"
         )
         val eventObserver = mockkObserver(viewModel.eventData)

@@ -25,12 +25,11 @@ class GithubRepositoryImplTest {
     }
 
     @Test
-    fun getDogListResourceSuccess() = runTest {
+    fun getRepoListResourceSuccess() = runTest {
         //given
         val gitRepo = emptyList<Github>()
 
-
-        coEvery { githubApi.fetchRepos(null) } returns NetworkResult.Success(gitRepo)
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Success(gitRepo)
 
         //when
         val result = githubRepository.getListRepo() as Resource.Success<List<Github>>
@@ -43,11 +42,11 @@ class GithubRepositoryImplTest {
     }
 
     @Test
-    fun getDogListResourceSuccessWithItem() = runTest {
+    fun getRepoListResourceSuccessWithItem() = runTest {
         //given
         val gitRepo = listOf(Github())
 
-         coEvery { githubApi.fetchRepos(null) } returns NetworkResult.Success(gitRepo)
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Success(gitRepo)
 
         //when
         val result = githubRepository.getListRepo() as Resource.Success<List<Github>>
@@ -60,9 +59,9 @@ class GithubRepositoryImplTest {
     }
 
     @Test
-    fun getDogListResourceError() = runTest {
+    fun getRepoListResourceError() = runTest {
         //given
-        coEvery { githubApi.fetchRepos(null) } returns NetworkResult.Error(Exception("error"))
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Error(Exception("error"))
 
         //when
         val result = githubRepository.getListRepo() as Resource.Error<*>

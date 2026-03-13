@@ -11,8 +11,8 @@ class GithubRepositoryImpl @Inject constructor(
     private val api: GithubApi
 ) : GithubRepository {
 
-    override suspend fun getListRepo(): Resource<List<Github>> {
-        return when (val data = api.fetchRepos(null)) {
+    override suspend fun getListRepo(page: Int, perPage: Int): Resource<List<Github>> {
+        return when (val data = api.fetchRepos(amount = perPage, page = page)) {
             is NetworkResult.Success -> Resource.Success(data.body)
             is NetworkResult.Error -> Resource.Error(
                 "api error",
