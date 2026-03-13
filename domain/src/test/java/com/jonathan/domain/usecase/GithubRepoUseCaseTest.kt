@@ -1,7 +1,8 @@
 package com.jonathan.domain.usecase
 
-import com.jonathan.data.model.Owner
 import com.jonathan.data.model.Github
+import com.jonathan.data.model.Owner
+import com.jonathan.data.repository.AMOUNT
 import com.jonathan.data.repository.GithubRepository
 import com.jonathan.data.utils.Resource
 import com.jonathan.domain.mapper.GithubRepoMapper
@@ -33,17 +34,17 @@ class GithubRepoUseCaseTest {
     fun executeUseCaseWithSuccess() = runTest {
         //given
         val repos =
-                listOf(
-                    Github(
-                        owner = Owner(avatarUrl = "avatar_url"),
-                        name = "repoRepo",
-                        forksCount = 10,
-                        watchers = 1100,
-                        language = "kotlin"
-                    )
+            listOf(
+                Github(
+                    owner = Owner(avatarUrl = "avatar_url"),
+                    name = "repoRepo",
+                    forksCount = 10,
+                    watchers = 1100,
+                    language = "kotlin"
                 )
+            )
 
-        coEvery { repository.getListRepo() } returns Resource.Success(repos)
+        coEvery { repository.getListRepo(1, AMOUNT) } returns Resource.Success(repos)
 
         //when
         val success = dogBreedsUseCase.getRepos() as GithubRepoUseCase.Event.Success
@@ -63,7 +64,7 @@ class GithubRepoUseCaseTest {
     @Test
     fun executeUseCaseWithError() = runTest {
         //given
-        coEvery { repository.getListRepo() } returns Resource.Error("error", null)
+        coEvery { repository.getListRepo(1, AMOUNT) } returns Resource.Error("error", null)
 
         //when
         val success = dogBreedsUseCase.getRepos() as GithubRepoUseCase.Event.Error
