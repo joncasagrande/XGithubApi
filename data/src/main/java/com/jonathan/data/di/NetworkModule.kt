@@ -4,8 +4,9 @@ import com.google.gson.FieldNamingPolicy
 import com.jonathan.data.BuildConfig
 import com.jonathan.data.api.GithubApi
 import com.jonathan.data.api.GithubApiImpl
-import com.jonathan.data.repository.GithubRepositoryImpl
+import com.jonathan.data.local.dao.RepoDao
 import com.jonathan.data.repository.GithubRepository
+import com.jonathan.data.repository.GithubRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,7 +61,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRepository(dogApi: GithubApi): GithubRepository {
-        return GithubRepositoryImpl(dogApi)
+    fun provideRepository(githubApi: GithubApi, repoDao: RepoDao): GithubRepository {
+        return GithubRepositoryImpl(githubApi, repoDao)
     }
 }

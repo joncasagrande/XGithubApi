@@ -6,5 +6,5 @@ import com.jonathan.data.utils.Resource
 const val AMOUNT = 10
 
 interface GithubRepository {
-    suspend fun getListRepo(): Resource<List<Github>>
+    suspend fun getListRepo(page: Int = 1, perPage: Int = AMOUNT): Resource<List<Github>>
 }

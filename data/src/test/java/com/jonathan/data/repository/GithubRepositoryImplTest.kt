@@ -1,11 +1,14 @@
 package com.jonathan.data.repository
 
 import com.jonathan.data.api.GithubApi
+import com.jonathan.data.local.dao.RepoDao
+import com.jonathan.data.local.entity.RepoEntity
 import com.jonathan.data.model.Github
 import com.jonathan.data.utils.NetworkResult
 import com.jonathan.data.utils.Resource
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -18,63 +21,88 @@ class GithubRepositoryImplTest {
     @MockK
     lateinit var githubApi: GithubApi
 
+    @MockK
+    lateinit var repoDao: RepoDao
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        githubRepository = GithubRepositoryImpl(githubApi)
+        githubRepository = GithubRepositoryImpl(githubApi, repoDao)
     }
 
     @Test
-    fun getDogListResourceSuccess() = runTest {
+    fun getRepoListResourceSuccess() = runTest {
         //given
         val gitRepo = emptyList<Github>()
 
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Success(gitRepo)
+        coEvery { repoDao.clearAll() } returns Unit
+        coEvery { repoDao.insertAll(any()) } returns Unit
+        //when
+        val result = githubRepository.getListRepo() as Resource.Success<List<Github>>
 
-        coEvery { githubApi.fetchRepos(null) } returns NetworkResult.Success(gitRepo)
+        //then
+        assertEquals(result.value.isEmpty(), true)
+        coVerify(exactly = 1) { repoDao.clearAll() }
+    }
+
+    @Test
+    fun getRepoListResourceSuccessWithItem() = runTest {
+        //given
+        val gitRepo = listOf(Github(id = 1, name = "repo"))
+
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Success(gitRepo)
+
+        coEvery { repoDao.clearAll() } returns Unit
+        coEvery { repoDao.insertAll(any()) } returns Unit
 
         //when
         val result = githubRepository.getListRepo() as Resource.Success<List<Github>>
 
         //then
-        assertEquals(
-            result.value.isEmpty(),
-            true
-        )
+        assertEquals(result.value.isNotEmpty(), true)
+        coVerify(exactly = 1) { repoDao.insertAll(any()) }
     }
 
     @Test
-    fun getDogListResourceSuccessWithItem() = runTest {
+    fun getDogListResourceErrorUsesCache() = runTest {
         //given
-        val gitRepo = listOf(Github())
-
-         coEvery { githubApi.fetchRepos(null) } returns NetworkResult.Success(gitRepo)
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Error(Exception("error"))
+        coEvery { repoDao.getAll() } returns listOf(
+            RepoEntity(
+                repoId = 1,
+                name = "cached",
+                description = "cached desc",
+                forksCount = 1,
+                watchers = 1,
+                language = "Kotlin",
+                stargazersCount = 1,
+                updatedAt = "today",
+                fork = false,
+                ownerLogin = "owner",
+                ownerAvatarUrl = null,
+                ownerHtmlUrl = "ownerUrl",
+                licenseName = "MIT"
+            )
+        )
 
         //when
         val result = githubRepository.getListRepo() as Resource.Success<List<Github>>
 
         //then
-        assertEquals(
-            result.value.isNotEmpty(),
-            true
-        )
+        assertEquals(result.value.first().name, "cached")
     }
 
     @Test
-    fun getDogListResourceError() = runTest {
+    fun getDogListResourceErrorWithoutCache() = runTest {
         //given
-        coEvery { githubApi.fetchRepos(null) } returns NetworkResult.Error(Exception("error"))
+        coEvery { githubApi.fetchRepos(AMOUNT, 1) } returns NetworkResult.Error(Exception("error"))
+        coEvery { repoDao.getAll() } returns emptyList()
 
         //when
         val result = githubRepository.getListRepo() as Resource.Error<*>
 
         //then
-        assertEquals(
-            result.error.isNotEmpty(),
-            true
-        )
-        assertEquals(
-            result.error,
-            "api error"
-        )
+        assertEquals(result.error, "api error")
     }
 }

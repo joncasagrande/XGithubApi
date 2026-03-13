@@ -38,6 +38,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
@@ -83,4 +89,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    configurations.all {
+        exclude(group = "org.junit.jupiter", module = "junit-jupter-params")
+        exclude(group = "org.junit.jupiter", module = "junit-jupter-engine")
+        exclude(group = "org.junit.jupiter", module = "junit-jupter-api")
+        exclude(group = "org.junit.platform", module = "junit-platform-engine")
+        exclude(group = "org.junit.platform", module = "junit-platform-commons")
+        exclude(group = "org.junit.jupiter", module = "junit-jupiter")
+    }
 }

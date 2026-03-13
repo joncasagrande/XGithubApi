@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
@@ -24,7 +26,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private val viewModel: MainActivityViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -54,10 +55,17 @@ class MainActivity : ComponentActivity() {
             // Home
             composable(Routes.Home.route) {
                 // pass the navController
-                HomeFragment(viewModel) {
-                    githubUi = it
-                    navController.navigate(Routes.ReposDescription.route)
-                }
+                LaunchedEffect(Unit) { viewModel.loadRepos() }
+                val eventState = viewModel.eventData.observeAsState()
+                HomeFragment(
+                    eventState.value,
+                    clickListener = {
+                        githubUi = it
+                        navController.navigate(Routes.ReposDescription.route)
+                    },
+                    loadNextPage = { viewModel.loadNextPage() },
+                    onRefresh = { viewModel.loadRepos() }
+                )
             }
             // Breed List
             composable(Routes.ReposDescription.route) {

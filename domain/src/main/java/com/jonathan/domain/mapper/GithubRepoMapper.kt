@@ -5,14 +5,13 @@ import com.jonathan.domain.model.GithubReposDto
 
 class GithubRepoMapper {
     fun mapper(githubRepos: List<Github>?): List<GithubReposDto> {
-        val githubReposDtos: MutableList<GithubReposDto> = mutableListOf()
-        githubRepos?.forEach { repos ->
-            val githubReposDto = GithubReposDto(
+        return githubRepos?.map { repos ->
+            GithubReposDto(
                 image = repos.owner?.avatarUrl,
                 name = repos.name.orEmpty(),
                 forks = repos.forksCount ?: 0,
                 watchers = repos.watchers ?: 0,
-                lang = repos.language?: "N/A",
+                lang = repos.language ?: "N/A",
                 description = repos.description,
                 ownerName = repos.owner?.login.orEmpty(),
                 ownerInfo = repos.owner?.htmlUrl.orEmpty(),
@@ -21,8 +20,6 @@ class GithubRepoMapper {
                 lastUpdated = repos.updatedAt.orEmpty(),
                 fork = repos.fork ?: false
             )
-            githubReposDtos.add(githubReposDto)
-        }
-        return githubReposDtos
+        } ?: emptyList()
     }
 }
