@@ -28,9 +28,7 @@
 ## Tradeoffs / missing features
 
 - **Tight module coupling**: `domain` depends on `data` (`implementation(project(":data"))`), which weakens clean architecture boundaries. Usually `data` should depend on abstractions from `domain`.
-- **Limited API flexibility**: endpoint is fixed to one org URL in `data/src/main/java/com/jonathan/data/api/ApiRoutes.kt`; no pagination, sorting, org selection, or search.
 - **Error handling is coarse**: repository returns a generic `"api error"` string and status mapping is fixed. Missing richer error body parsing/retry/backoff handling.
-- **No local cache/offline mode**: app currently appears network-only (no Room/DataStore persistence).
 
 ## How to run the app/tests
 
